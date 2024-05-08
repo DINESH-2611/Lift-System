@@ -8,25 +8,9 @@ public class Lift {
     private String name;
     private int floor;
     private int totalCapacity;
-    private int remainingCapacity;
-    private int noOfStops;
 
-    public void setRemainingCapacity(int remainingCapacity) {
-        this.remainingCapacity = remainingCapacity;
-    }
-
-    public int getNoOfStops() {
-        return noOfStops;
-    }
-
-    public void setNoOfStops(int noOfStops) {
-        this.noOfStops = noOfStops;
-    }
-
-    public Lift(String name, int floor,int totalCapacity) {
+    public Lift(String name) {
         this.name = name;
-        this.floor = floor;
-        this.totalCapacity=totalCapacity;
     }
 
     public String getName() {
@@ -53,13 +37,6 @@ public class Lift {
         this.totalCapacity = totalCapacity;
     }
 
-    public int getRemainingCapacity() {
-        return remainingCapacity;
-    }
-
-    public void setRemainingCapacityCapacity(int currentCapacity) {
-        this.remainingCapacity = currentCapacity;
-    }
 }
 
 class LiftApp {
@@ -86,14 +63,14 @@ class LiftApp {
 //            lift.setTotalCapacity(totalCapacity);
 //            lifts.add(lift);
 //        }
-        lifts.add(new Lift("L1", 0,5));
-        lifts.add(new Lift("L2", 0,5));
-        lifts.add(new Lift("L3", 9,10));
-        lifts.add(new Lift("L4", 0,4));
-        lifts.add(new Lift("L5", 8,8));
+//        lifts.add(new Lift("L1", 0,5));
+//        lifts.add(new Lift("L2", 0,5));
+//        lifts.add(new Lift("L3", 9,10));
+//        lifts.add(new Lift("L4", 7,4));
+//        lifts.add(new Lift("L5", 8,8));
         printList();
         while (true) {
-            System.out.println("1.Use Lift\n2.Maintenence Lift\n3.Exit\nEnter the choice");
+            System.out.println("1.Display position of the lift\n2.Assign lift to the user\n3.Assign to the nearest lift\n5.Assign lift in the same direction\nEnter the choice");
             int choice = Integer.parseInt(sc.nextLine());
             switch (choice) {
                 case 1:
@@ -103,15 +80,22 @@ class LiftApp {
                     maintainLift(sc);
                     break;
                 case 3:
+                    assignLiftFloor(sc);
+                    break;
+                case 4:
                     System.out.println("\t\t\tThank You...");
                     break;
                 default:
                     System.out.println("\t\t\tInvalid choice,Enter valid choice");
                     break;
             }
-            if (choice == 2)
+            if (choice == 4)
                 break;
         }
+    }
+
+    private void assignLiftFloor(Scanner sc) {
+
     }
 
     private void maintainLift(Scanner sc) {
@@ -152,7 +136,7 @@ class LiftApp {
                 int stops = getStops(lift.getName(), lift.getFloor(), destinationFloor);
                 if (stops < minStop) {
                     nearLift.add(lift);
-                    lift.setNoOfStops(stops);
+//                    lift.setNoOfStops(stops);
                     lift1 = lift;
                     minStop = stops;
                 }
@@ -160,16 +144,19 @@ class LiftApp {
         }
         if (lift1 != null) {
             if (lift1.getTotalCapacity() >= passengers) {
+                System.out.println("abc");
                 System.out.println("\t\t\t" + lift1.getName() + " is assigned");
                 for (Lift lift : lifts) {
                     if (lift.getName().equals(name)) {
                         if (lift.getTotalCapacity() >= passengers) {
                             lift.setFloor(destinationFloor);
                             name = "";
-
+                            printList();
+                            return;
                         }
                     }
                 }
+//                System.out.println("\t\t\tPassengers count exceeds "+lift1.getName()+" Total count");
             }
             if (nearLift.size() == 0) {
                 System.out.println("\t\t\tNo lift is free now,Please wait for some time");
