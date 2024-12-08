@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Books</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .table-container {
+            margin-top: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        table {
+            width: 100%;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="table-container">
+    <h2 id="abc" style="display:none">Available Books</h2>
+    <table id="def" style="display:none" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Book Name</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Quantity</th>
+        </tr>
+        </thead>
+        <tbody id="booksTableBody">
+        <!-- Books will be populated here by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Fetch the book data from the ViewBook servlet
+    fetch('ViewBook')
+    .then(response => {
+        if (response.redirected) {
+            // If redirected, navigate to the new URL
+            window.location.href = response.url;
+        } else {
+            // Otherwise, assume it's a JSON response
+            return response.json();
+        }
+    })
+        .then(data => {
+            const books = data.books;  // Extract books from the JSON
+            const tableBody = document.getElementById('booksTableBody');  // Get the table body element
+
+            // If there are no books, display a message
+            if (books.length === 0) {
+            def.style.display='none';
+            def.style.display='none';
+                tableBody.innerHTML = '<tr><td colspan="4">No books found</td></tr>';
+            } else {
+             abc.style.display='block';
+            def.style.display='block';
+                // Loop through the books and create table rows dynamically
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.name}</td>
+                        <td>${book.author}</td>
+                        <td>${book.publisher}</td>
+                        <td>${book.quantity}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+<!--        .catch(error => {-->
+<!--            console.error('Error fetching books:', error);-->
+<!--            document.getElementById('booksTableBody').innerHTML = '<tr><td colspan="4">Error fetching data</td></tr>';-->
+<!--        });-->
+</script>
+</body>
+</html>

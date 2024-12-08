@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Books</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 id="abc" style="display: none;">Available Books</h2>
+
+    <!-- Only show the table if books are available -->
+    <table id="booksTable" class="table table-striped" style="display: none;">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Quantity</th>
+            <th>Get Book</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Rows will be dynamically populated -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Function to get URL parameter
+    function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    // Retrieve the book name from the URL query parameter
+    const bookName = getQueryParameter('name');
+
+    // Fetch available books from the GetBook servlet using the book name
+    fetch('GetBook', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `name=${encodeURIComponent(bookName)}` // Send the book name to the servlet
+    })
+    .then(response => response.json())
+    .then(data => {
+        const books = data.books;
+        const tableBody = document.querySelector('#booksTable tbody');
+        const table = document.getElementById('booksTable');
+        const header = document.getElementById('abc');
+
+        // Clear existing rows
+        tableBody.innerHTML = '';
+
+        if (books && books.length > 0) {
+            // Show the table and header if books are found
+            table.style.display = 'table';
+            header.style.display = 'block';
+
+            books.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.name}</td>
+                    <td>${book.author}</td>
+                    <td>${book.publisher}</td>
+                    <td>${book.quantity}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="issueBook(${book.id})">Get Book</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            // Display alert and redirect if no books are found
+            alert('No books found!');
+            setTimeout(() => {
+                window.location.href = 'userpage.jsp';
+            }, 1000); // 1-second delay before redirecting
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching books:', error);
+        alert('No book found!');
+        window.location.href = 'userpage.jsp';
+    });
+
+    // Function to handle the form submission when 'Get Book' is clicked
+    function issueBook(bookId) {
+        // Create a form element dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'IssueBook';  // The URL of the IssueBook servlet
+
+        // Create hidden input fields for bookId
+        const bookIdField = document.createElement('input');
+        bookIdField.type = 'hidden';
+        bookIdField.name = 'bookId';
+        bookIdField.value = bookId;
+
+        // Append the inputs to the form
+        form.appendChild(bookIdField);
+
+        // Append the form to the body (it won't be visible)
+        document.body.appendChild(form);
+
+        // Submit the form
+        form.submit();
+    }
+</script>
+</body>
+</html>
